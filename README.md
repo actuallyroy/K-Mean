@@ -77,4 +77,4 @@ This implementation relies on the following Python libraries:
 
 ## Author
 
-- [Your Name](https://github.com/actuallyroy)
+- [actuallyroy](https://github.com/actuallyroy)
