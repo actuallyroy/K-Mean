@@ -9,8 +9,8 @@ To use this K-Means clustering implementation, follow these steps:
 1. **Clone the Repository:**
 
    ```bash
-   git clone https://github.com/actuallyroy/K-Means.git
-   cd K-Means
+   git clone https://github.com/actuallyroy/K-Meangit
+   cd K-Mean
    ```
 
 2. **Import the `K_mean` Class:**
@@ -18,7 +18,7 @@ To use this K-Means clustering implementation, follow these steps:
    Import the `K_mean` class in your Python script:
 
    ```python
-   from k_means_clustering import K_mean
+   from K_Mean import K_mean
    ```
 
 3. **Prepare Your Data:**
@@ -34,7 +34,7 @@ To use this K-Means clustering implementation, follow these steps:
    data = list(zip(x, y, z, x))  # Combine the dimensions into a list of tuples
    ```
 
-4. **Create a K-Means Object:**
+4. **Create a K-Mean Object:**
 
    Create a `K_mean` object by providing your data and the number of clusters (k) you want to create. Optionally, you can provide initial centroids:
 
