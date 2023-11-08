@@ -72,7 +72,6 @@ This implementation relies on the following Python libraries:
 
 - `random`: For generating random numbers.
 - `matplotlib`: For data visualization.
-- `time`: For timing the clustering process.
 - `math`: For mathematical calculations.
 
 ## Author
