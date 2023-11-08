@@ -9,7 +9,7 @@ To use this K-Means clustering implementation, follow these steps:
 1. **Clone the Repository:**
 
    ```bash
-   git clone https://github.com/actuallyroy/K-Meangit
+   git clone https://github.com/actuallyroy/K-Mean.git
    cd K-Mean
    ```
 
