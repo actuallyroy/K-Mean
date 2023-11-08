@@ -9,8 +9,8 @@ To use this K-Means clustering implementation, follow these steps:
 1. **Clone the Repository:**
 
    ```bash
-   git clone https://github.com/your-username/k-means-clustering.git
-   cd k-means-clustering
+   git clone https://github.com/actuallyroy/K-Means.git
+   cd K-Means
    ```
 
 2. **Import the `K_mean` Class:**
