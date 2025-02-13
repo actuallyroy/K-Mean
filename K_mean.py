@@ -11,10 +11,11 @@ class K_mean:
   dimension = 0
   clusters = []
   centroidsProvided = False
-  def __init__(self, data, k = 4, centroids = []):
+  def __init__(self, data, k = 4, centroids = [], significantPortion = None):
     self.dimension = len(data[0])
     self.n_clusters = k
     self.data = data
+    self.significantPortion = significantPortion
 
     if(centroids):
       self.initCentroids = centroids
@@ -25,7 +26,7 @@ class K_mean:
 
   def getInitCentroids(self, k):
     self.initCentroids = []
-    for i in range(k):
+    for _ in range(k):
         randCent = self.data[int(random()*len(self.data))]
         if(not randCent in self.initCentroids):
           self.initCentroids.append(randCent)
@@ -40,30 +41,52 @@ class K_mean:
       arr = [0] * self.dimension
       l = len(i)
       if(l > 0):
-        for j in i:
-          for k, v in enumerate(j):
-            arr[k] += v
+        if(self.significantPortion):
+          if(len(self.significantPortion) > 1):
+            arr = [0] * (self.significantPortion[1] - self.significantPortion[0])
+            for j in i:
+              for k, v in enumerate(j[self.significantPortion[0]:self.significantPortion[1]]):
+                arr[k] += v
+          else:
+            arr = [0] * (self.dimension - self.significantPortion[0])
+            for j in i:
+              for k, v in enumerate(j[self.significantPortion[1]:]):
+                arr[k] += v
+        else:
+          for j in i:
+            for k, v in enumerate(j):
+              arr[k] += v
         centroids.append(tuple(round(m/l, 2) for m in arr))
       else:
         centroids.append(arr)
     return centroids
   
   def calcCentroid(self, cluster):
-    if(len(cluster) > 0):
-      arr = [0] * self.dimension
-      l = len(cluster)
-      for j in cluster:
-        for k, v in enumerate(j):
-          arr[k] += v
-      return tuple(round(m/l, 2) for m in arr)
+    l = len(cluster)
+    arr = [0] * self.dimension
+    if(l > 0):
+      if(self.significantPortion):
+        if(len(self.significantPortion) > 1):
+          for j in cluster:
+            for k, v in enumerate(j[self.significantPortion[0]:self.significantPortion[1]]):
+              arr[k] += v
+        else:
+          for j in cluster:
+            for k, v in enumerate(j[self.significantPortion[1]:]):
+              arr[k] += v
+      return (tuple(round(m/l, 2) for m in arr))
+    return arr
 
-  def calcInertia(self, cluster = []):
+  def calcInertia(self, cluster = [], minInertia = math.inf):
     if(not cluster):
       cluster = self.clusters
     inertia = 0
     for i in cluster:
+      i_centroid = self.calcCentroid(i)
       for j in i:
-        inertia += self.distance(j, self.calcCentroid(i))**2
+        inertia += self.manhattanDistance(j, i_centroid)
+        if(inertia > minInertia):
+          return inertia
     return inertia
 
   def distance(self, p1, p2):
@@ -71,17 +94,26 @@ class K_mean:
     return math.sqrt(sum(arr))
 
   def manhattanDistance(self, p1, p2):
-    arr = [abs(p1[i] - p2[i]) for i in range(len(p1))]
+    if(self.significantPortion):
+      if(len(self.significantPortion) > 1):
+        arr = [abs(p1[i] - p2[i]) for i in range(self.significantPortion[0], self.significantPortion[1])]
+      else:
+        arr = [abs(p1[i] - p2[i]) for i in range(self.significantPortion[0])]
+    else:
+      arr = [abs(p1[i] - p2[i]) for i in range(len(p1))]
     return sum(arr)
 
   def cluster(self, data, centroids):
-    arrClus = [[] for i in range(self.n_clusters)]
-    for i in data:
-      arrD = [] 
-      for j in centroids:
-        arrD.append(self.manhattanDistance(i, j))
-      i_min = arrD.index(min(arrD))
-      arrClus[i_min].append(i)
+    arrClus = [[] for _ in range(self.n_clusters)]
+    for dataPoint in data:
+      i_min = 0
+      minVal = math.inf
+      for i, centroid in enumerate(centroids):
+        d = self.manhattanDistance(dataPoint, centroid)
+        if d < minVal:
+          minVal = d
+          i_min = i
+      arrClus[i_min].append(dataPoint)
     return arrClus
   
   def getClusters(self, k = 0):
@@ -92,10 +124,11 @@ class K_mean:
     bestCentroids = []
     max = math.inf
 
-    for i in range(100):
+    for _ in range(1, 20):
+      print(_)
       centroids = self.getInitCentroids(k)
       clus = self.K_MeanCluster([[]], centroids)
-      p = self.calcInertia(clus)
+      p = self.calcInertia(clus, max)
       if(max > p):
         max = p
         bestCentroids = centroids
